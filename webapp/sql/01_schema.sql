@@ -3,7 +3,8 @@ use `isucari`;
 DROP TABLE IF EXISTS `configs`;
 CREATE TABLE configs (
     `name` VARCHAR(191) NOT NULL PRIMARY KEY,
-    `val` VARCHAR(255) NOT NULL
+    `val` VARCHAR(255) NOT NULL,
+    INDEX (`name`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4;
 
 DROP TABLE IF EXISTS `users`;
@@ -30,7 +31,8 @@ CREATE TABLE `items` (
   `category_id` int unsigned NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_category_id (`category_id`)
+  INDEX idx_category_id (`category_id`),
+  INDEX idx_created_at_and_id (`created_at`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4;
 
 DROP TABLE IF EXISTS `transaction_evidences`;
