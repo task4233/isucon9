@@ -284,6 +284,8 @@ func main() {
 		log.Fatal(http.ListenAndServe(":6060", nil))
 	}()
 
+	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 4096 * 5
+
 	host := os.Getenv("MYSQL_HOST")
 	if host == "" {
 		host = "127.0.0.1"
