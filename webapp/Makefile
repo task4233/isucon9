@@ -27,7 +27,7 @@ commit:
 	git commit --allow-empty -m "bench"
 
 .PHONY: alp
-anal: # ここにalpのコマンドを書く
+alp: # ここにalpのコマンドを書く
 
 .PHONY: before
 before:
@@ -44,13 +44,15 @@ before:
 
 .PHONY: slow
 slow: 
-	sudo pt-query-digest $(MYSQL_LOG)
+	mkdir -p ~/logs
+	sudo pt-query-digest $(MYSQL_LOG) > ~/logs/slow_$(date +%s).log
 
 PPROF:=go tool pprof http://localhost:6060/debug/pprof/profile
 
 .PHONY: pprof
 pprof:
-	$(PPROF)
+	mkdir -p ~/logs
+	$(PPROF) > ~/logs/pprof_$(date +%s).log
 
 .PHONY: slow-on
 slow-on:
