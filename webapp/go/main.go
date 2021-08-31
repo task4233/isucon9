@@ -469,6 +469,15 @@ func getCategoryByID(q sqlx.Queryer, categoryID int) (category Category, err err
 	return
 }
 
+func getCategoryByParentId(parentId int) (categoryIds []int) {
+	for key, value := range categoryMap {
+		if parentId == value.ParentID {
+			categoryIds = append(categoryIds, key)
+		}
+	}
+	return
+}
+
 func getConfigByName(name string) (string, error) {
 	config := Config{}
 	err := dbx.Get(&config, "SELECT * FROM `configs` WHERE `name` = ?", name)
@@ -662,13 +671,7 @@ func getNewCategoryItems(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var categoryIDs []int
-	err = dbx.Select(&categoryIDs, "SELECT id FROM `categories` WHERE parent_id=?", rootCategory.ID)
-	if err != nil {
-		log.Print(err)
-		outputErrorMsg(w, http.StatusInternalServerError, "db error")
-		return
-	}
+	categoryIDs := getCategoryByParentId(rootCategory.ID)
 
 	query := r.URL.Query()
 	itemIDStr := query.Get("item_id")
