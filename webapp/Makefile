@@ -11,7 +11,7 @@ PPROF_PORT:=8888
 MYSQL_CMD:=mysql -h$(DB_HOST) -P$(DB_PORT) -u$(DB_USER) -p$(DB_PASS) $(DB_NAME)
 
 NGX_LOG:=/tmp/access.log
-MYSQL_LOG:=/tmp/slow-query.log
+MYSQL_LOG:=/tmp/mysql-slow.sql
 
 PROJECT_ROOT:= # /home/isucon/isucari
 BUILD_DIR:= # /home/isucon/isucari/webapp/go
@@ -50,7 +50,7 @@ before:
 .PHONY: pt-query
 pt-query: 
 	mkdir -p ~/logs/pt-query
-	sudo pt-query-digest $(MYSQL_LOG) > ~/logs/pt-query/slow_$(date +%s).log
+	pt-query-digest $(MYSQL_LOG) > ~/logs/pt-query/slow_$(date +%s).log
 
 PPROF:=go tool pprof -http=":8888" http://localhost:6060/debug/pprof/profile
 
@@ -74,11 +74,12 @@ setup:
 	wget -O alp.zip https://github.com/tkuchiki/alp/releases/download/v1.0.6/alp_linux_amd64.zip
 	unzip alp.zip
 	install alp /usr/local/bin/alp
-	rm -rf alp
+	rm -rf alp*
 	echo 'install pt-query-digest'
 	wget https://github.com/percona/percona-toolkit/archive/3.0.5-test.tar.gz
 	tar zxvf 3.0.5-test.tar.gz
 	./percona-toolkit-3.0.5-test/bin/pt-query-digest --version
 	sudo mv ./percona-toolkit-3.0.5-test/bin/pt-query-digest /usr/local/bin/pt-query-digest
+	rm -rf 3.0.5-test.tar.gz
 	echo 'install pprof'
 	go get -u github.com/google/pprof
