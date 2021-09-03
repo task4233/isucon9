@@ -1164,7 +1164,7 @@ func getItem(w http.ResponseWriter, r *http.Request) {
 			if err == sql.ErrNoRows {
 				outputErrorMsg(w, http.StatusNotFound, "shipping not found")
 				return
-			}
+			}hogeoge
 			if err != nil {
 				log.Print(err)
 				outputErrorMsg(w, http.StatusInternalServerError, "db error")
