@@ -25,6 +25,8 @@ type APIPaymentServiceTokenRes struct {
 	Status string `json:"status"`
 }
 
+bug here
+　
 type APIShipmentCreateReq struct {
 	ToAddress   string `json:"to_address"`
 	ToName      string `json:"to_name"`
