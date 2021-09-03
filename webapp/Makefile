@@ -83,3 +83,35 @@ setup:
 	rm -rf 3.0.5-test.tar.gz
 	echo 'install pprof'
 	go get -u github.com/google/pprof
+
+# sql-migrateのインストール
+.PHONY: migrate/setup
+migrate/setup:
+	go get github.com/rubenv/sql-migrate/...
+	mkdir -p ./migrations/
+	touch migrations/dbconfig.yml
+
+# 新しいmigration fileを作る
+.PHONY: migrate/new
+migrate/new:
+	sql-migrate new --config=migrations/dbconfig.yml taskname
+
+# migrationを実行する
+.PHONY: migrate/up
+migrate/up:
+	sql-migrate up --config=migrations/dbconfig.yml
+
+# migrationの状態を確認する
+.PHONY: migrate/status
+migrate/status:
+	sql-migrate status --config=migrations/dbconfig.yml
+
+# migrationをロールバックする
+.PHONY: migrate/down
+migrate/down:
+	sql-migrate down --config=migrations/dbconfig.yml
+
+# 実行予定のsqlを出力する
+.PHONY: migrate/check
+migrate/check:
+	sql-migrate up -dryrun --config=migrations/dbconfig.yml
