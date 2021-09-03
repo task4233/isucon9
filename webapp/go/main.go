@@ -15,6 +15,8 @@ import (
 	"strconv"
 	"time"
 
+	_ "net/http/pprof"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/sessions"
 	"github.com/jmoiron/sqlx"
@@ -279,6 +281,11 @@ func init() {
 }
 
 func main() {
+	// ref: https://blog.zoe.tools/entry/2020/07/26/181836
+	go func() {
+		log.Println(http.ListenAndServe("0.0.0.0:6060", nil))
+	}()
+
 	host := os.Getenv("MYSQL_HOST")
 	if host == "" {
 		host = "127.0.0.1"

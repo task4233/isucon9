@@ -5,6 +5,9 @@ DB_USER:=
 DB_PASS:=
 DB_NAME:=
 
+APP_PORT:=8000
+PPROF_PORT:=8888
+
 MYSQL_CMD:=mysql -h$(DB_HOST) -P$(DB_PORT) -u$(DB_USER) -p$(DB_PASS) $(DB_NAME)
 
 NGX_LOG:=/tmp/access.log
@@ -18,7 +21,7 @@ BENCH=#./bin/benchmarker
 CA:=-o /dev/null -s -w "%{http_code}\n"
 
 .PHONY: bench
-bench: commit before slow-on ${BENCH}
+bench: commit before slow-on $(BENCH)
 
 .PHONY: commit
 commit:
@@ -27,7 +30,9 @@ commit:
 	git commit --allow-empty -m "bench"
 
 .PHONY: alp
-alp: # ここにalpのコマンドを書く
+alp:
+	mkdir -p ~/logs/alp
+	cat /usr/local/var/log/nginx/access.log | alp ltsv --sort avg -r -m '/items/[0-9]+\.json' > ~/logs/alp/$(date +%s).log
 
 .PHONY: before
 before:
@@ -42,17 +47,16 @@ before:
 	sudo systemctl restart nginx
 	sudo systemctl restart mysql
 
-.PHONY: slow
-slow: 
-	mkdir -p ~/logs
-	sudo pt-query-digest $(MYSQL_LOG) > ~/logs/slow_$(date +%s).log
+.PHONY: pt-query
+pt-query: 
+	mkdir -p ~/logs/pt-query
+	sudo pt-query-digest $(MYSQL_LOG) > ~/logs/pt-query/slow_$(date +%s).log
 
-PPROF:=go tool pprof http://localhost:6060/debug/pprof/profile
+PPROF:=go tool pprof -http=":8888" http://localhost:6060/debug/pprof/profile/
 
 .PHONY: pprof
 pprof:
-	mkdir -p ~/logs
-	$(PPROF) > ~/logs/pprof_$(date +%s).log
+	$(PPROF)
 
 .PHONY: slow-on
 slow-on:
