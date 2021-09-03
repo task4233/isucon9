@@ -52,7 +52,7 @@ pt-query:
 	mkdir -p ~/logs/pt-query
 	sudo pt-query-digest $(MYSQL_LOG) > ~/logs/pt-query/slow_$(date +%s).log
 
-PPROF:=go tool pprof -http=":8888" http://localhost:6060/debug/pprof/profile/
+PPROF:=go tool pprof -http=":8888" http://localhost:6060/debug/pprof/profile
 
 .PHONY: pprof
 pprof:
